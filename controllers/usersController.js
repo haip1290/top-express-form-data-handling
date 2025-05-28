@@ -49,6 +49,38 @@ const usersController = {
       }
     },
   ],
+
+  usersUpdateGet: (req, res) => {
+    const user = usersStorage.getUser(req.params.id);
+    if (user) {
+      res.render("updateUser", { title: "Update User", user: user });
+    } else {
+      res.render("updateUser", {
+        title: "Update User",
+        errors: "Cannot Find User",
+      });
+    }
+  },
+
+  usersUpdatePost: [
+    ...validateUser,
+    (req, res) => {
+      const id = req.params.id;
+      const user = usersStorage.getUser(id);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).render("updateUser", {
+          title: "Update User",
+          user: user,
+          errors: errors.array(),
+        });
+      }
+
+      const { firstName, lastName } = req.body;
+      usersStorage.updateUser(id, { firstName, lastName });
+      res.redirect("/");
+    },
+  ],
 };
 
 module.exports = usersController;
