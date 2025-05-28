@@ -27,7 +27,7 @@ const usersController = {
     res.render("createUser", { title: " Create User" });
   },
   usersCreatePost: [
-    validateUser,
+    ...validateUser,
     (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -38,8 +38,15 @@ const usersController = {
       }
 
       const { firstName, lastName } = req.body;
-      usersStorage.addUsers({ firstName, lastName });
-      res.redirect("/");
+      try {
+        usersStorage.addUsers({ firstName, lastName });
+        res.redirect("/");
+      } catch (storageError) {
+        console.log("Error adding user to storage: ", storageError);
+        return res
+          .status(500)
+          .render("error", { message: "Failed to add user" });
+      }
     },
   ],
 };

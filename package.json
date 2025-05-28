@@ -3,5 +3,8 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-validator": "^7.2.1"
+  },
+  "devDependencies": {
+    "ejs-lint": "^2.0.1"
   }
 }
