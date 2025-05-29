@@ -3,6 +3,9 @@ const usersStorage = require("../storage/usersStorage");
 const { body, validationResult } = require("express-validator");
 const alphaErr = "must only contain letter";
 const lengthErr = "must be between 1 - 10 characters";
+const bioLengthErr = "must be between 1 - 10 characters";
+const emailErr = "Invalid email format";
+const numErr = "must be number from 18 to 120";
 
 const validateUser = [
   body("firstName")
@@ -17,6 +20,17 @@ const validateUser = [
     .withMessage(`Last Name ${alphaErr}`)
     .isLength({ min: 1, max: 10 })
     .withMessage(`Last Name ${lengthErr}`),
+  body("email").trim().isEmail().withMessage(`emailErr`),
+  body("age")
+    .optional({ values: "falsy" })
+    .trim()
+    .isNumeric()
+    .withMessage(`Age ${numErr}`),
+  body("bio")
+    .optional({ values: "falsy" })
+    .trim()
+    .isLength({ min: 0, mas: 200 })
+    .withMessage(`Bio ${bioLengthErr}`),
 ];
 
 const usersController = {
@@ -37,9 +51,9 @@ const usersController = {
         });
       }
 
-      const { firstName, lastName } = req.body;
+      const { firstName, lastName, email, age, bio } = req.body;
       try {
-        usersStorage.addUsers({ firstName, lastName });
+        usersStorage.addUsers({ firstName, lastName, email, age, bio });
         res.redirect("/");
       } catch (storageError) {
         console.log("Error adding user to storage: ", storageError);
@@ -76,11 +90,16 @@ const usersController = {
         });
       }
 
-      const { firstName, lastName } = req.body;
-      usersStorage.updateUser(id, { firstName, lastName });
+      const { firstName, lastName, email, age, bio } = req.body;
+      usersStorage.updateUser(id, { firstName, lastName, email, age, bio });
       res.redirect("/");
     },
   ],
+
+  userDeletePost: (req, res) => {
+    usersStorage.deleteUser(req.params.id);
+    res.redirect("/");
+  },
 };
 
 module.exports = usersController;
