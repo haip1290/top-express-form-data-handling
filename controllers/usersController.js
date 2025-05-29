@@ -10,25 +10,29 @@ const numErr = "must be number from 18 to 120";
 const validateUser = [
   body("firstName")
     .trim()
+    .escape()
     .isAlpha()
     .withMessage(`First Name ${alphaErr}`)
     .isLength({ min: 1, max: 10 })
     .withMessage(`First Name ${lengthErr}`),
   body("lastName")
     .trim()
+    .escape()
     .isAlpha()
     .withMessage(`Last Name ${alphaErr}`)
     .isLength({ min: 1, max: 10 })
     .withMessage(`Last Name ${lengthErr}`),
-  body("email").trim().isEmail().withMessage(`emailErr`),
+  body("email").trim().normalizeEmail().isEmail().withMessage(`emailErr`),
   body("age")
     .optional({ values: "falsy" })
     .trim()
+    .escape()
     .isNumeric()
     .withMessage(`Age ${numErr}`),
   body("bio")
     .optional({ values: "falsy" })
     .trim()
+    .escape()
     .isLength({ min: 0, mas: 200 })
     .withMessage(`Bio ${bioLengthErr}`),
 ];
