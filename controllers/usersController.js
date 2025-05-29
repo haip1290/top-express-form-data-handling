@@ -96,6 +96,12 @@ const usersController = {
     },
   ],
 
+  userSearchGet: (req, res) => {
+    const { query } = req.query;
+    const users = usersStorage.findUserbyNameOrEmail(query);
+    res.render("searchUser", { title: "Search User", users: users });
+  },
+
   userDeletePost: (req, res) => {
     usersStorage.deleteUser(req.params.id);
     res.redirect("/");
